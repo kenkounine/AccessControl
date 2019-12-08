@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <string name="url_host">http://54.180.100.92:8080/</string>
+
+    <!-- 정책확인 -->
+    <string name="url_policy">api/getPolicy.api</string>
+
+    <!-- 명령상태보고 -->
+    <string name="url_cmd_state">api/setCmdState.api</string>
+
+    <!-- 레지아이디저장 -->
+    <string name="url_registration">api/setRegi.api</string>
+
+    <!-- 최종명령확인 -->
+    <string name="url_last_cmd">api/getLastCommand.api</string>
+
+    <!-- 버전확인 -->
+    <string name="url_version">api/getVersion.api</string>
+
+</resources>
