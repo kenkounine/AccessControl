@@ -22,12 +22,20 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.1.0'
+<<<<<<< HEAD
     implementation 'com.google.firebase:firebase-analytics:17.2.0'
     implementation 'com.google.firebase:firebase-core:17.2.1'
+=======
+    implementation 'com.google.firebase:firebase-core:17.0.0'
+>>>>>>> 83d5729dd5a35dec467b4e6a593ab0ea3726ca5a
     implementation 'com.google.firebase:firebase-messaging:20.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 }
 
+<<<<<<< HEAD
 apply plugin: 'com.google.gms.google-services'
+=======
+apply plugin: 'com.google.gms.google-services'  // Google Play services Gradle plugin
+>>>>>>> 83d5729dd5a35dec467b4e6a593ab0ea3726ca5a
