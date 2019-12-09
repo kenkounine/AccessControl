@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "1047571158913",
+    "firebase_url": "https://accesscontrol-4c4b8.firebaseio.com",
+    "project_id": "accesscontrol-4c4b8",
+    "storage_bucket": "accesscontrol-4c4b8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1047571158913:android:512bbccf075f587cf6ba80",
+        "android_client_info": {
+          "package_name": "com.vietnamproject.accesscontrol"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1047571158913-ol6mm77hijm59rfafjoegodhtu3s9ref.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCoOOlz9D2SCA4wEfB7TL9v1zWtZ_OaytA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1047571158913-ol6mm77hijm59rfafjoegodhtu3s9ref.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
