@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.vietnamproject.accesscontrol.util.LockView xmlns:android="http://schemas.android.com/apk/res/android"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="40dp"
+    android:background="#FF0B173B" >
+
+    <LinearLayout
+
+        android:orientation="vertical"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center" >
+
+        <TextView
+
+            android:id="@+id/tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="#FFFFFFFF"
+            android:text="@string/app_name" />
+
+        <ImageButton
+
+            android:id="@+id/ib_lock"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/selector_lock" />
+
+        <ImageButton
+
+            android:id="@+id/ib_unlock"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/unlock_icon"
+            android:visibility="gone" />
+
+        <EditText
+
+            android:id="@id/et"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:gravity="center"
+            android:padding="10dp"
+            android:inputType="numberPassword"
+            android:textColorHint="@android:color/holo_green_light"
+            android:hint="인증번호를 입력해주세요."
+            android:textSize="14dp"
+            android:textColor="@android:color/black"
+            android:background="@android:color/white"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</com.vietnamproject.accesscontrol.util.LockView>

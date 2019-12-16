@@ -10,7 +10,7 @@ public class SharedPref {
 
     private static final SharedPref INSTANCE = new SharedPref();
 
-    private final String PREF_NAME = "com.gaoncnce.PICKMECAM";
+    private final String PREF_NAME = "com.vietnamproject.ACCESSCONTROL";
 
     private SharedPreferences mSharedPreferences;
 

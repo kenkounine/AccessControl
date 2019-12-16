@@ -5,6 +5,9 @@ public class Param {
     /** 응답코드(0이 아니면 실패) */
     public static final String RESPONSE_CODE = "respcode";
 
+    /** 위치 범위 값 */
+    public static final String GPS = "gps";
+
     /** 기기 고유번호 */
     public static final String DEVICE_ID = "imei";
 
@@ -33,7 +36,7 @@ public class Param {
     public static final String PHONE_NUMBER = "phone";
 
     /** 아이디 */
-    public static final String ID = "id";
+    public static final String USER_ID = "id";
 
     /** url */
     public static final String URL = "url";

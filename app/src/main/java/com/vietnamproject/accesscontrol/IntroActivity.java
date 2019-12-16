@@ -1,9 +1,12 @@
 package com.vietnamproject.accesscontrol;
 
-import android.app.admin.DevicePolicyManager;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.nfc.FormatException;
+import android.nfc.NdefMessage;
+import android.nfc.NfcAdapter;
+import android.nfc.Tag;
+import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
@@ -11,6 +14,7 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -22,7 +26,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.vietnamproject.accesscontrol.config.Define;
+import com.vietnamproject.accesscontrol.util.DeviceAdminManager;
 import com.vietnamproject.accesscontrol.util.SharedPref;
+import com.vietnamproject.accesscontrol.util.Utils;
 import com.vietnamproject.accesscontrol.was.JsonAsync;
 import com.vietnamproject.accesscontrol.was.Param;
 import com.vietnamproject.accesscontrol.was.PermissionActivity;
@@ -30,10 +36,12 @@ import com.vietnamproject.accesscontrol.was.WasManager;
 
 import org.json.JSONObject;
 
+import java.io.IOException;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 
 public class IntroActivity extends PermissionActivity implements View.OnClickListener {
-
-    private final int DEVICE_ADMIN_ADD_RESULT_ENABLE = 0xFF;
 
     private EditText mEdit;
 
@@ -43,7 +51,53 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
 
         super.onCreate( savedInstanceState );
         setContentView( R.layout.activity_intro );
-        requestAllPermissions();
+
+        if( !checkNfc( getIntent() ) ) requestAllPermissions();
+
+        TextView versionText = findViewById( R.id.tv_version );
+
+        versionText.setText( getString( R.string.version, Utils.getVersionName( this ) ) );
+
+    }
+
+    @Override
+    protected void onNewIntent( Intent intent ) {
+
+        super.onNewIntent( intent );
+        checkNfc( intent );
+
+    }
+
+    private boolean checkNfc( Intent intent ) {
+
+        if( intent != null ) {
+
+            Tag tag = intent.getParcelableExtra( NfcAdapter.EXTRA_TAG );
+
+            if( tag != null ) {
+
+                Ndef ndef = Ndef.get( tag );
+
+                if( ndef != null ) {
+
+                    try {
+
+                        ndef.connect();
+
+                        NdefMessage ndefMessage = ndef.getNdefMessage();
+                        String cmd = new String( ndefMessage.getRecords()[ 0 ].getPayload() );
+
+                        ndef.close();
+                        DeviceAdminManager.getInstance().setPolicy( this, Utils.getCmdCode( cmd ) );
+
+                        return true;
+
+                    } catch( IOException | FormatException e ) { e.printStackTrace(); }
+                }
+            }
+        }
+
+        return false;
 
     }
 
@@ -70,14 +124,10 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
             parent.setVisibility( View.VISIBLE );
             parent.startAnimation( anim );
 
-
         } else tryLogin( userId );
     }
 
-    /**
-     * 서버에 로그인을 시도한다.
-     * @param userId
-     */
+    /** 서버에 로그인을 시도한다. */
     private void tryLogin( final String userId ) {
 
         showProgress();
@@ -101,12 +151,10 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
                                 @Override
                                 public void onResponse( JSONObject json, int respCode ) {
 
-                                    Log.d( "WHKIM", "onResponse( " + json.toString() + ", " + respCode + " )" );
-
                                     dismissProgress();
 
                                     if( respCode == JsonAsync.JSONASYNC_200OK ) {
-                                        setDeviceAdmin();
+
                                         try {
 
                                             int response = json.getInt( Param.RESPONSE_CODE );
@@ -115,7 +163,26 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
 
                                                 case 0 :
 
-                                                    setDeviceAdmin();
+                                                    SharedPref.getInstance().putString( IntroActivity.this, Define.SharedKey.USER_ID, userId );
+
+                                                    String gps = json.getString( Param.GPS );
+                                                    View parent = findViewById( R.id.layout );
+
+                                                    parent.setVisibility( View.GONE );
+                                                    Toast.makeText( IntroActivity.this, getString( R.string.login_message, userId ), Toast.LENGTH_SHORT ).show();
+
+                                                    if( !TextUtils.isEmpty( gps ) ) {
+
+                                                        String[] location = gps.split( "," );
+                                                        Set<String> set = new LinkedHashSet<>();
+
+                                                        for( String s : location ) set.add( s );
+
+                                                        SharedPref.getInstance().putStringSet( IntroActivity.this, Define.SharedKey.LOCATION, set );
+
+                                                    }
+
+                                                    checkLastCmd();
 
                                                     break;
 
@@ -138,14 +205,30 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
                 } );
     }
 
-    private void setDeviceAdmin() {
+    private void checkLastCmd() {
 
-        ComponentName componentName = new ComponentName( this, AdminReceiver.class );
-        Intent intent = new Intent( DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN );
+        WasManager.getInstance().requestLastCmd( this, new JsonAsync.JsonAsyncListener() {
 
-        intent.putExtra( DevicePolicyManager.EXTRA_DEVICE_ADMIN, componentName );
-        startActivityForResult( intent, DEVICE_ADMIN_ADD_RESULT_ENABLE );
+            @Override
+            public void onResponse( JSONObject json, int respCode ) {
 
+                if( respCode == JsonAsync.JSONASYNC_200OK ) {
+
+                    try {
+
+                        int response = json.getInt( Param.RESPONSE_CODE );
+
+                        if( response == Define.Error.NONE ) {
+
+                            String cmd = json.getString( Param.CMD );
+
+                            DeviceAdminManager.getInstance().setPolicy( IntroActivity.this, Integer.valueOf( cmd ) );
+
+                        }
+                    } catch( Exception e ) { e.printStackTrace(); }
+                }
+            }
+        } );
     }
 
     @Override
@@ -189,17 +272,5 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
                     .show();
 
         } else checkUserId();
-    }
-
-    @Override
-    protected void onActivityResult( int requestCode, int resultCode, Intent data ) {
-
-        if( requestCode == DEVICE_ADMIN_ADD_RESULT_ENABLE ) {
-            
-//            final boolean adminActive = devicePolicyManager.isAdminActive(componentName);
-//            boolean cameraDisabled = devicePolicyManager.getCameraDisabled(componentName);
-            // TODO 감시 서비스 시작
-
-        } else super.onActivityResult( requestCode, resultCode, data );
     }
 }

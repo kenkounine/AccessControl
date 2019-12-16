@@ -1,3 +1,31 @@
 <resources>
+
     <string name="app_name">AccessControl</string>
+    <string name="default_notification_channel_id">AccessControl</string>
+    <string name="device_admin_description">AccessControl</string>
+    <string name="notification">알림</string>
+    <string name="ok">확인</string>
+    <string name="cancel">취소</string>
+
+    <string name="login">로그인</string>
+    <string name="input_id">아이디를 입력해 주세요.</string>
+    <string name="version">version : %s</string>
+
+    <string name="init_failed">초기화에 실패했습니다.</string>
+    <string name="login_failed">로그인에 실패했습니다.(error code:%d)</string>
+    <string name="login_error">로그인 도중 에러가 발생했습니다.\n%s</string>
+    <string name="login_message">%s로 로그인 되었습니다.</string>
+
+    <string name="error_db_insert">Server DB 저장 실패</string>
+    <string name="error_data_parse">Server 데이터 파싱 실패</string>
+    <string name="error_invalid_param">파라메타부족</string>
+    <string name="error_empty_param">파라메타없음</string>
+    <string name="error_system">시스템오류</string>
+    <string name="error_not_supported">지원하지 않는 기기</string>
+    <string name="error_empty_device_info">기기정보없음</string>
+    <string name="error_empty_user_info">미등록사용자</string>
+    <string name="error_etc">기타 에러(error code:%d)</string>
+    <string name="error_permission">권한을 허용하지 않은 경우 해당 앱을 이용 할 수 없습니다.\n권한을 허용해 주세요.</string>
+    <string name="error_device_admin">관리자 기능을 활성화 하지 않을 경우 해당앱을 이용 할 수 없습니다.\n관리자 기능을 활성화 해주세요.</string>
+
 </resources>
