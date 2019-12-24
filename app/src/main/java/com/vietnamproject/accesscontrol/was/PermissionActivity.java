@@ -121,12 +121,6 @@ public class PermissionActivity extends BaseActivity {
 
         } else { // 23보다 낮은 권한이 경우 모두 허용으로 전달 한다.
 
-            for( String permission : permissions ) {
-
-                if( isSpecialPermission( permission ) ) onSpecialPermissionResult( mRequestCode, permission, true );
-
-            }
-
             onPermissionsResult( requestCode, false, null );
 
         }

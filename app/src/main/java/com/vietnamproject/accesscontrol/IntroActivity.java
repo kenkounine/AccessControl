@@ -44,6 +44,7 @@ import java.util.Set;
 public class IntroActivity extends PermissionActivity implements View.OnClickListener {
 
     private EditText mEdit;
+    private EditText mEditPhone;
 
 
     @Override
@@ -108,10 +109,12 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
     private void checkUserId() {
 
         String userId = SharedPref.getInstance().getString( this, Define.SharedKey.USER_ID, null );
+        String phoneNumber = SharedPref.getInstance().getString( this, Define.SharedKey.USER_PHONE, null );
 
-        if( TextUtils.isEmpty( userId ) ) {
+        if( TextUtils.isEmpty( userId ) || TextUtils.isEmpty( phoneNumber ) ) {
 
             mEdit = findViewById( R.id.et );
+            mEditPhone = findViewById( R.id.et_phone );
             View parent = findViewById( R.id.layout );
             View btn = findViewById( R.id.btn );
 
@@ -124,11 +127,11 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
             parent.setVisibility( View.VISIBLE );
             parent.startAnimation( anim );
 
-        } else tryLogin( userId );
+        } else tryLogin( userId, phoneNumber );
     }
 
     /** 서버에 로그인을 시도한다. */
-    private void tryLogin( final String userId ) {
+    private void tryLogin( final String userId, final String phoneNumber ) {
 
         showProgress();
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener( new OnCompleteListener<InstanceIdResult>() {
@@ -146,7 +149,7 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
                             // Get new Instance ID token
                             String token = task.getResult().getToken();
 
-                            WasManager.getInstance().sendRegistrationToken(IntroActivity.this, userId, token, new JsonAsync.JsonAsyncListener() {
+                            WasManager.getInstance().sendRegistrationToken(IntroActivity.this, userId, phoneNumber, token, new JsonAsync.JsonAsyncListener() {
 
                                 @Override
                                 public void onResponse( JSONObject json, int respCode ) {
@@ -235,9 +238,11 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
     public void onClick( View v ) {
 
         String userId = mEdit.getText().toString().trim();
+        String phoneNumber = mEditPhone.getText().toString().trim();
 
         if( TextUtils.isEmpty( userId ) ) Toast.makeText( this, R.string.input_id, Toast.LENGTH_SHORT ).show();
-        else tryLogin( userId );
+        else if( TextUtils.isEmpty( phoneNumber ) ) Toast.makeText( this, R.string.input_phone, Toast.LENGTH_SHORT  ).show();
+        else tryLogin( userId, phoneNumber );
 
     }
 

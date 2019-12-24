@@ -22,7 +22,7 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
 
-        <activity android:name=".IntroActivity" android:windowSoftInputMode="adjustResize" >
+        <activity android:name=".IntroActivity" android:windowSoftInputMode="adjustResize" android:screenOrientation="portrait" >
 
             <intent-filter>
 
@@ -44,7 +44,7 @@
 
         </activity>
 
-        <activity android:name=".MainActivity" />
+        <activity android:name=".MainActivity" android:screenOrientation="portrait" />
 
         <service android:name=".service.FcmMessagingService" android:exported="false" >
             <intent-filter>

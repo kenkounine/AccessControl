@@ -38,6 +38,7 @@ public class Utils {
      * @param context
      * @return
      */
+    @Deprecated
     public static String getPhoneNumber( Context context ) {
 
         try {

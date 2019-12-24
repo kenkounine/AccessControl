@@ -9,6 +9,7 @@
 
     <string name="login">로그인</string>
     <string name="input_id">아이디를 입력해 주세요.</string>
+    <string name="input_phone">전화번호를 입력해 주세요.</string>
     <string name="version">version : %s</string>
 
     <string name="init_failed">초기화에 실패했습니다.</string>
