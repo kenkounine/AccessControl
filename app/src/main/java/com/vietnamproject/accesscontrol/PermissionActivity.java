@@ -1,4 +1,4 @@
-package com.vietnamproject.accesscontrol.was;
+package com.vietnamproject.accesscontrol;
 
 import android.Manifest;
 import android.annotation.TargetApi;

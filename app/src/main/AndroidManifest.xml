@@ -45,6 +45,7 @@
         </activity>
 
         <activity android:name=".MainActivity" android:screenOrientation="portrait" />
+        <activity android:name=".NotifyActivity" android:screenOrientation="portrait" android:noHistory="true" />
 
         <service android:name=".service.FcmMessagingService" android:exported="false" >
             <intent-filter>

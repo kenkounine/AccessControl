@@ -17,6 +17,9 @@
     <string name="login_error">로그인 도중 에러가 발생했습니다.\n%s</string>
     <string name="login_message">%s로 로그인 되었습니다.</string>
 
+    <string name="lock_mode">잠금모드 실행</string>
+    <string name="unlock_mode">잠금모드 해제</string>
+
     <string name="error_db_insert">Server DB 저장 실패</string>
     <string name="error_data_parse">Server 데이터 파싱 실패</string>
     <string name="error_invalid_param">파라메타부족</string>

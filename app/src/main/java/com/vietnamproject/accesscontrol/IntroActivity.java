@@ -9,7 +9,6 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -31,7 +30,6 @@ import com.vietnamproject.accesscontrol.util.SharedPref;
 import com.vietnamproject.accesscontrol.util.Utils;
 import com.vietnamproject.accesscontrol.was.JsonAsync;
 import com.vietnamproject.accesscontrol.was.Param;
-import com.vietnamproject.accesscontrol.was.PermissionActivity;
 import com.vietnamproject.accesscontrol.was.WasManager;
 
 import org.json.JSONObject;
@@ -167,6 +165,7 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
                                                 case 0 :
 
                                                     SharedPref.getInstance().putString( IntroActivity.this, Define.SharedKey.USER_ID, userId );
+                                                    SharedPref.getInstance().putString( IntroActivity.this, Define.SharedKey.USER_PHONE, phoneNumber );
 
                                                     String gps = json.getString( Param.GPS );
                                                     View parent = findViewById( R.id.layout );
