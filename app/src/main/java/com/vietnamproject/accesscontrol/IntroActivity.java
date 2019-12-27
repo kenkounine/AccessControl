@@ -89,6 +89,7 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
 
                         ndef.close();
                         DeviceAdminManager.getInstance().setPolicy( this, Utils.getCmdCode( cmd ) );
+                        finish();
 
                         return true;
 

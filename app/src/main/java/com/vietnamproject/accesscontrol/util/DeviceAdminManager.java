@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 
 import com.vietnamproject.accesscontrol.AdminReceiver;
+import com.vietnamproject.accesscontrol.NotificationActivity;
 import com.vietnamproject.accesscontrol.config.Define;
 import com.vietnamproject.accesscontrol.was.WasManager;
 
@@ -56,6 +57,16 @@ public class DeviceAdminManager {
 
     }
 
+    private void launchActivity( Context context, int mode ) {
+
+        Intent intent = new Intent( context, NotificationActivity.class );
+
+        intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
+        intent.putExtra( NotificationActivity.EXTRA_MODE, mode );
+        context.startActivity( intent );
+
+    }
+
     public void setPolicy( Context context, int cmdCode ) {
 
         try {
@@ -73,6 +84,7 @@ public class DeviceAdminManager {
 
                         SharedPref.getInstance().putInt( context, Define.SharedKey.LAST_CMD, Define.CMD_CODE.CAMERA_LOCK );
                         getDevicePolicyManager( context ).setCameraDisabled( getComponentName( context ), true );
+                        launchActivity( context, NotificationActivity.MODE_LOCK );
 
                         break;
 
@@ -80,6 +92,7 @@ public class DeviceAdminManager {
 
                         SharedPref.getInstance().putInt( context, Define.SharedKey.LAST_CMD, Define.CMD_CODE.CAMERA_UNLOCK );
                         getDevicePolicyManager( context ).setCameraDisabled( getComponentName( context ), false );
+                        launchActivity( context, NotificationActivity.MODE_UNLOCK );
 
                         break;
 
