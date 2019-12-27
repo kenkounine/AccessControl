@@ -1,7 +1,11 @@
 package com.vietnamproject.accesscontrol;
 
+import android.animation.ValueAnimator;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
@@ -9,11 +13,12 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +36,6 @@ import com.vietnamproject.accesscontrol.util.SharedPref;
 import com.vietnamproject.accesscontrol.util.Utils;
 import com.vietnamproject.accesscontrol.was.JsonAsync;
 import com.vietnamproject.accesscontrol.was.Param;
-import com.vietnamproject.accesscontrol.was.PermissionActivity;
 import com.vietnamproject.accesscontrol.was.WasManager;
 
 import org.json.JSONObject;
@@ -44,6 +48,7 @@ import java.util.Set;
 public class IntroActivity extends PermissionActivity implements View.OnClickListener {
 
     private EditText mEdit;
+    private EditText mEditPhone;
 
 
     @Override
@@ -109,10 +114,12 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
     private void checkUserId() {
 
         String userId = SharedPref.getInstance().getString( this, Define.SharedKey.USER_ID, null );
+        String phoneNumber = SharedPref.getInstance().getString( this, Define.SharedKey.USER_PHONE, null );
 
-        if( TextUtils.isEmpty( userId ) ) {
+        if( TextUtils.isEmpty( userId ) || TextUtils.isEmpty( phoneNumber ) ) {
 
             mEdit = findViewById( R.id.et );
+            mEditPhone = findViewById( R.id.et_phone );
             View parent = findViewById( R.id.layout );
             View btn = findViewById( R.id.btn );
 
@@ -125,11 +132,55 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
             parent.setVisibility( View.VISIBLE );
             parent.startAnimation( anim );
 
-        } else tryLogin( userId );
+        } else {
+
+            int lastCmd = SharedPref.getInstance().getInt( this, Define.SharedKey.LAST_CMD, Define.CMD_CODE.NONE );
+
+            if( lastCmd == Define.CMD_CODE.CAMERA_LOCK ) {
+
+                ImageView iv = findViewById( R.id.iv_lock );
+                final Drawable drawable = iv.getDrawable();
+
+                final float[] from = new float[ 3 ];
+                final float[] to = new float[ 3 ];
+                final float[] hsv = new float[ 3 ];
+
+                Color.colorToHSV( Color.parseColor("#FFFFFFFF" ), from );
+                Color.colorToHSV( Color.parseColor("#FFFF0000" ), to );
+
+                ValueAnimator animator = ValueAnimator.ofFloat( 0, 1 );
+
+                animator.setDuration( 500 );
+                animator.setRepeatCount( Animation.INFINITE );
+                animator.setRepeatMode( ValueAnimator.REVERSE );
+                animator.addUpdateListener( new ValueAnimator.AnimatorUpdateListener() {
+
+                    @Override
+                    public void onAnimationUpdate( ValueAnimator animation ) {
+
+                        float animatedFraction = animation.getAnimatedFraction();
+
+                        hsv[ 0 ] = from[ 0 ] + ( to[ 0 ] - from[ 0 ] ) * animatedFraction;
+                        hsv[ 1 ] = from[ 1 ] + ( to[ 1 ] - from[ 1 ] ) * animatedFraction;
+                        hsv[ 2 ] = from[ 2 ] + ( to[ 2 ] - from[ 2 ] ) * animatedFraction;
+
+                        drawable.setColorFilter( Color.HSVToColor( hsv ), PorterDuff.Mode.SRC_ATOP );
+
+                    }
+                } );
+
+                animator.start();
+                iv.setVisibility( View.VISIBLE );
+
+            } else findViewById( R.id.btn_lock ).setVisibility( View.VISIBLE );
+
+            tryLogin( userId, phoneNumber );
+
+        }
     }
 
     /** 서버에 로그인을 시도한다. */
-    private void tryLogin( final String userId ) {
+    private void tryLogin( final String userId, final String phoneNumber ) {
 
         showProgress();
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener( new OnCompleteListener<InstanceIdResult>() {
@@ -147,7 +198,7 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
                             // Get new Instance ID token
                             String token = task.getResult().getToken();
 
-                            WasManager.getInstance().sendRegistrationToken(IntroActivity.this, userId, token, new JsonAsync.JsonAsyncListener() {
+                            WasManager.getInstance().sendRegistrationToken(IntroActivity.this, userId, phoneNumber, token, new JsonAsync.JsonAsyncListener() {
 
                                 @Override
                                 public void onResponse( JSONObject json, int respCode ) {
@@ -165,11 +216,13 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
                                                 case 0 :
 
                                                     SharedPref.getInstance().putString( IntroActivity.this, Define.SharedKey.USER_ID, userId );
+                                                    SharedPref.getInstance().putString( IntroActivity.this, Define.SharedKey.USER_PHONE, phoneNumber );
 
                                                     String gps = json.getString( Param.GPS );
                                                     View parent = findViewById( R.id.layout );
 
                                                     parent.setVisibility( View.GONE );
+                                                    findViewById( R.id.btn_lock ).setVisibility( View.VISIBLE );
                                                     Toast.makeText( IntroActivity.this, getString( R.string.login_message, userId ), Toast.LENGTH_SHORT ).show();
 
                                                     if( !TextUtils.isEmpty( gps ) ) {
@@ -183,7 +236,7 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
 
                                                     }
 
-                                                    checkLastCmd();
+//                                                    checkLastCmd();
 
                                                     break;
 
@@ -206,6 +259,7 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
                 } );
     }
 
+    @Deprecated
     private void checkLastCmd() {
 
         WasManager.getInstance().requestLastCmd( this, new JsonAsync.JsonAsyncListener() {
@@ -236,9 +290,18 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
     public void onClick( View v ) {
 
         String userId = mEdit.getText().toString().trim();
+        String phoneNumber = mEditPhone.getText().toString().trim();
 
         if( TextUtils.isEmpty( userId ) ) Toast.makeText( this, R.string.input_id, Toast.LENGTH_SHORT ).show();
-        else tryLogin( userId );
+        else if( TextUtils.isEmpty( phoneNumber ) ) Toast.makeText( this, R.string.input_phone, Toast.LENGTH_SHORT  ).show();
+        else tryLogin( userId, phoneNumber );
+
+    }
+
+    public void onLock( View v ) {
+
+        DeviceAdminManager.getInstance().setPolicy( IntroActivity.this, Define.CMD_CODE.CAMERA_LOCK );
+        finish();
 
     }
 

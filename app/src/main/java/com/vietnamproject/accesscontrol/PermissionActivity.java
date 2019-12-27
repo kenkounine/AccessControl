@@ -1,4 +1,4 @@
-package com.vietnamproject.accesscontrol.was;
+package com.vietnamproject.accesscontrol;
 
 import android.Manifest;
 import android.annotation.TargetApi;
@@ -120,12 +120,6 @@ public class PermissionActivity extends BaseActivity {
             else onPermissionsResult( requestCode, false, null );
 
         } else { // 23보다 낮은 권한이 경우 모두 허용으로 전달 한다.
-
-            for( String permission : permissions ) {
-
-                if( isSpecialPermission( permission ) ) onSpecialPermissionResult( mRequestCode, permission, true );
-
-            }
 
             onPermissionsResult( requestCode, false, null );
 

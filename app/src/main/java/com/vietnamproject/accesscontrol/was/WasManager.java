@@ -79,7 +79,7 @@ public class WasManager {
     /**
      * 로그인
      */
-    public void sendRegistrationToken( Context context, String userId, String token, JsonAsync.JsonAsyncListener listener ) {
+    public void sendRegistrationToken( Context context, String userId, String phoneNumber, String token, JsonAsync.JsonAsyncListener listener ) {
 
         JsonAsync async = new JsonAsync();
 
@@ -88,7 +88,7 @@ public class WasManager {
         async.addParam( Param.DEVICE_ID, Utils.getDeviceId( context ) );
         async.addParam( Param.MODEL, Build.MODEL );
         async.addParam( Param.VERSION, Utils.getVersionName( context ) );
-        async.addParam( Param.PHONE_NUMBER, Utils.getPhoneNumber( context ) );
+        async.addParam( Param.PHONE_NUMBER, phoneNumber );
         async.addParam( Param.USER_ID, userId );
         async.request( getHost( context ) + context.getString( R.string.url_registration ), listener );
 

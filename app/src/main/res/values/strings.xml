@@ -9,6 +9,7 @@
 
     <string name="login">로그인</string>
     <string name="input_id">아이디를 입력해 주세요.</string>
+    <string name="input_phone">전화번호를 입력해 주세요.</string>
     <string name="version">version : %s</string>
 
     <string name="lock_mode">잠금모드 실행</string>

@@ -8,7 +8,7 @@ import android.content.Intent;
 import android.text.TextUtils;
 
 import com.vietnamproject.accesscontrol.AdminReceiver;
-import com.vietnamproject.accesscontrol.NotificationActivity;
+import com.vietnamproject.accesscontrol.NotifyActivity;
 import com.vietnamproject.accesscontrol.config.Define;
 import com.vietnamproject.accesscontrol.was.WasManager;
 
@@ -57,12 +57,12 @@ public class DeviceAdminManager {
 
     }
 
-    private void launchActivity( Context context, int mode ) {
+    private void startNotifyActivity( Context context, int cmdCode ) {
 
-        Intent intent = new Intent( context, NotificationActivity.class );
+        Intent intent = new Intent( context, NotifyActivity.class );
 
-        intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK );
-        intent.putExtra( NotificationActivity.EXTRA_MODE, mode );
+        intent.putExtra( NotifyActivity.EXTRA_CMD_CODE, cmdCode );
+        intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP );
         context.startActivity( intent );
 
     }
@@ -84,7 +84,7 @@ public class DeviceAdminManager {
 
                         SharedPref.getInstance().putInt( context, Define.SharedKey.LAST_CMD, Define.CMD_CODE.CAMERA_LOCK );
                         getDevicePolicyManager( context ).setCameraDisabled( getComponentName( context ), true );
-                        launchActivity( context, NotificationActivity.MODE_LOCK );
+                        startNotifyActivity( context, cmdCode );
 
                         break;
 
@@ -92,7 +92,7 @@ public class DeviceAdminManager {
 
                         SharedPref.getInstance().putInt( context, Define.SharedKey.LAST_CMD, Define.CMD_CODE.CAMERA_UNLOCK );
                         getDevicePolicyManager( context ).setCameraDisabled( getComponentName( context ), false );
-                        launchActivity( context, NotificationActivity.MODE_UNLOCK );
+                        startNotifyActivity( context, cmdCode );
 
                         break;
 

@@ -111,6 +111,8 @@ public class Define {
 
         public static final String USER_ID = "user_id";
 
+        public static final String USER_PHONE = "user_phone";
+
         public static final String LOCATION = "location";
 
         public static final String LAST_CMD = "last_cmd";
