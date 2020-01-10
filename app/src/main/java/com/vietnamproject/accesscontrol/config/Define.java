@@ -105,6 +105,9 @@ public class Define {
         /** 작동중지 */
         public static final int STOP = 8;
 
+        /** 핫스팟 OFF */
+        public static final int HOTSPOT_OFF = 12;
+
     }
 
     public class SharedKey {

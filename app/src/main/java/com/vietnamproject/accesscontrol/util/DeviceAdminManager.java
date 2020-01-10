@@ -5,11 +5,13 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.text.TextUtils;
 
 import com.vietnamproject.accesscontrol.AdminReceiver;
 import com.vietnamproject.accesscontrol.NotifyActivity;
 import com.vietnamproject.accesscontrol.config.Define;
+import com.vietnamproject.accesscontrol.service.PolicyService;
 import com.vietnamproject.accesscontrol.was.WasManager;
 
 public class DeviceAdminManager {
@@ -62,7 +64,7 @@ public class DeviceAdminManager {
         Intent intent = new Intent( context, NotifyActivity.class );
 
         intent.putExtra( NotifyActivity.EXTRA_CMD_CODE, cmdCode );
-        intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP );
+        intent.addFlags( Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS );
         context.startActivity( intent );
 
     }
@@ -82,6 +84,9 @@ public class DeviceAdminManager {
 
                     case Define.CMD_CODE.CAMERA_LOCK :
 
+                        if( Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1 ) context.startForegroundService( new Intent( context, PolicyService.class ).setAction( PolicyService.ACTION_START_SERVICE ) );
+                        else context.startService( new Intent( context, PolicyService.class ).setAction( PolicyService.ACTION_START_SERVICE ) );
+
                         SharedPref.getInstance().putInt( context, Define.SharedKey.LAST_CMD, Define.CMD_CODE.CAMERA_LOCK );
                         getDevicePolicyManager( context ).setCameraDisabled( getComponentName( context ), true );
                         startNotifyActivity( context, cmdCode );
@@ -89,6 +94,9 @@ public class DeviceAdminManager {
                         break;
 
                     case Define.CMD_CODE.CAMERA_UNLOCK :
+
+                        if( Build.VERSION.SDK_INT > Build.VERSION_CODES.N_MR1 ) context.startForegroundService( new Intent( context, PolicyService.class ).setAction( PolicyService.ACTION_STOP_SERVICE ) );
+                        else context.startService( new Intent( context, PolicyService.class ).setAction( PolicyService.ACTION_STOP_SERVICE ) );
 
                         SharedPref.getInstance().putInt( context, Define.SharedKey.LAST_CMD, Define.CMD_CODE.CAMERA_UNLOCK );
                         getDevicePolicyManager( context ).setCameraDisabled( getComponentName( context ), false );

@@ -1,18 +1,27 @@
 package com.vietnamproject.accesscontrol;
 
 import android.animation.ValueAnimator;
+import android.app.ActivityManager;
+import android.app.NotificationManager;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.os.Bundle;
+import android.provider.Settings;
+import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -251,7 +260,7 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
 
                                         SharedPref.getInstance().putString( IntroActivity.this, Define.SharedKey.USER_ID, userId );
 
-                                    } else Toast.makeText( IntroActivity.this, getString( R.string.login_failed, respCode ), Toast.LENGTH_SHORT ).show();
+                                    } else Toast.makeText( IntroActivity.this, getString( R.string.login_failed, Integer.valueOf( respCode ) ), Toast.LENGTH_SHORT ).show();
                                 }
                             } );
                         }
@@ -309,6 +318,8 @@ public class IntroActivity extends PermissionActivity implements View.OnClickLis
     protected void onPermissionsResult( int requestCode, boolean hasDeniedPermissions, @Nullable final String[] deniedPermissions ) {
 
         if( hasDeniedPermissions ) {
+
+            for( String permission : deniedPermissions ) Log.d( "WHKIM", "deniedPermission : " + permission );
 
             new AlertDialog.Builder( this )
                     .setTitle( R.string.notification )

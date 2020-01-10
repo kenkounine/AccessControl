@@ -3,6 +3,8 @@ package com.vietnamproject.accesscontrol;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import com.vietnamproject.accesscontrol.was.JsonAsync;
 import com.vietnamproject.accesscontrol.was.WasManager;
@@ -33,6 +35,10 @@ public class EventReceiver extends BroadcastReceiver {
                         }
                     }
                 } );
+            } else if( "android.net.conn.TETHER_STATE_CHANGED".equals( action ) ) {
+
+                Log.d( "WHKIM", "AAAAAAAAAAAAAAAAAAAAAAAAAA" );
+
             }
         }
     }
